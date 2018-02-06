@@ -53,7 +53,6 @@ void RaspberryCamera::StartCapture()
   {
     while (true)
     {
-      Profile profile("Capture");
       bool result = RaspiCamera.grab();
       if (!result)
       {

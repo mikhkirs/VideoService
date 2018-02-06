@@ -11,17 +11,21 @@ void RecordStream::Handle(const unsigned char* data, unsigned size)
 {
   if (Started)
   {
-    Profile profile("Encode");
     EncoderEngine.Encode(data, size);
   }
 }
 
-void RecordStream::StartRecord()
+void RecordStream::Start()
 {
   Started = true;
 }
 
-void RecordStream::StopRecord()
+void RecordStream::Stop()
 {
   Started = false;
+}
+
+bool RecordStream::IsStarted() const
+{
+  return Started;
 }

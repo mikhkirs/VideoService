@@ -4,6 +4,7 @@
 #include "RaspberryCamera.h"
 #include "RaspberryEncoder.h"
 #include "RecordStream.h"
+#include "WebServer.h"
 
 #include <iostream>
 
@@ -35,6 +36,9 @@ int main(int argc, char **argv)
     camera.AddHandler(recordStream);
     camera.AddHandler(liveStream);
     camera.Capture();
+
+    WebServer webServer(*recordStream, *liveStream);
+    webServer.Run();
   }
   catch (const std::exception& e)
   {
