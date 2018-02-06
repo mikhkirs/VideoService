@@ -21,6 +21,12 @@ RaspberryCamera::RaspberryCamera(unsigned width, unsigned height, unsigned fps)
   Data.resize(RaspiCamera.getImageBufferSize());
 }
 
+RaspberryCamera::~RaspberryCamera()
+{
+  if (CaptureThread.joinable())
+    CaptureThread.join();
+}
+
 void RaspberryCamera::setCameraSettings()
 {
   RaspiCamera.setWidth(Width);
@@ -38,18 +44,30 @@ void RaspberryCamera::printCameraInfo()
 
 void RaspberryCamera::Capture()
 {
-  while (true)
+  CaptureThread = std::thread(&RaspberryCamera::StartCapture, this);
+}
+
+void RaspberryCamera::StartCapture()
+{
+  try
   {
-    Profile profile("Capture");
-    bool result = RaspiCamera.grab();
-    if (!result)
+    while (true)
     {
-      std::cout << "Error grab frame from camera " << std::endl;
-      sleep(1);
-      continue;
+      Profile profile("Capture");
+      bool result = RaspiCamera.grab();
+      if (!result)
+      {
+        std::cout << "Error grab frame from camera " << std::endl;
+        sleep(1);
+        continue;
+      }
+      RaspiCamera.retrieve(&Data[0]);
+      Handle();
     }
-    RaspiCamera.retrieve(&Data[0]);
-    Handle();
+  }
+  catch (const std::exception& e)
+  {
+    std::cout << e.what() << std::endl;
   }
 }
 
