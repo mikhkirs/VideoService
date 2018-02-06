@@ -10,6 +10,10 @@ public:
 
   virtual void Handle(const unsigned char* data, unsigned size);
 
+  void StartRecord();
+  void StopRecord();
+
 private:
   Encoder& EncoderEngine;
+  bool Started;
 };

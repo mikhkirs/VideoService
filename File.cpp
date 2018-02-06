@@ -2,7 +2,6 @@
 #include "dirent.h"
 #include "stdio.h"
 #include "sys/stat.h"
-#include <exception>
 #include <stdexcept>
 
 
@@ -11,8 +10,7 @@ File::File(const std::string& name, const std::string& mode)
   file = fopen(name.c_str(), mode.c_str());
   if (!file) 
   {
-    //throw std::runtime_error("Failed to open file " + name + ". Error - " + std::to_string(errno));
-    throw std::runtime_error("Failed to open file ");
+    throw std::runtime_error("Failed to open file " + name + ". Error - " + std::to_string(errno));
   }
 }
 
