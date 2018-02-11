@@ -1,7 +1,7 @@
-INC=-I../raspicam/src -I/opt/vc/src/hello_pi/libs/ilclient -I/opt/vc/include -I/usr/include -I../restbed/source -I../restbed/dependency/asio/asio/include -I..
-PRELIB=/opt/vc/src/hello_pi/libs/ilclient/libilclient.a ../restbed/build/librestbed.a -L/opt/vc/lib -lbcm_host -lopenmaxil -lbcm_host -lvcos -lvchiq_arm -lpthread -lraspicam -lssl -lcrypto
+INC=-I../raspicam/src -I/opt/vc/src/hello_pi/libs/ilclient -I/opt/vc/include -I/usr/include -I../restbed/source -I../restbed/dependency/asio/asio/include -I.. -I/usr/local/include/liveMedia -I/usr/local/include/groupsock -I/usr/local/include/UsageEnvironment -I/usr/local/include/BasicUsageEnvironment
+PRELIB=/opt/vc/src/hello_pi/libs/ilclient/libilclient.a ../restbed/build/librestbed.a -L/opt/vc/lib -lbcm_host -lopenmaxil -lbcm_host -lvcos -lvchiq_arm -lpthread -lraspicam -lssl -lcrypto -lliveMedia -lBasicUsageEnvironment -lgroupsock -lUsageEnvironment
 CPPFLAGS = -std=c++11
-BUILDLIST=Config.cpp File.cpp FileWriter.cpp LiveStream.cpp main.cpp RaspberryCamera.cpp RaspberryEncoder.cpp RecordStream.cpp TimeUtils.cpp WebServer.cpp 
+BUILDLIST=Config.cpp File.cpp FileWriter.cpp H264Subsession.cpp Live.cpp LiveStream.cpp main.cpp PacketFrameSource.cpp RaspberryCamera.cpp RaspberryEncoder.cpp RecordStream.cpp TimeUtils.cpp WebServer.cpp 
 THIRDPARTYBUILDLIST=../ini/cpp/INIReader.cpp ../ini/ini.c
 
 all:
