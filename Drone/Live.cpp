@@ -6,7 +6,10 @@
 #include "RTSPServer.hh"
 #include "ServerMediaSession.hh"
 
+const unsigned RtpPacketSize = 15000;
+
 Live::Live()
+  : PayloadBuffer(0)
 {
   TaskScheduler* scheduler = BasicTaskScheduler::createNew();
   UsageEnvironment* env = BasicUsageEnvironment::createNew(*scheduler);
@@ -17,7 +20,7 @@ Live::Live()
     throw std::runtime_error(std::string("Failed to create RTSP server: ") + env->getResultMsg());
   }
 
-  H264Subsession *h264Subsession = new H264Subsession(*env);
+  H264Subsession *h264Subsession = new H264Subsession(*env, PayloadBuffer);
   ServerMediaSession* sms = ServerMediaSession::createNew(*env, "h264Stream", "h264Stream", "Drone live stream session");
   sms->addSubsession(h264Subsession);
   rtspServer->addServerMediaSession(sms);
@@ -41,4 +44,9 @@ Live::~Live()
 
 void Live::Handle(const unsigned char* packetData, unsigned size)
 {
+  PayloadBuffer.Add(packetData, size);
+  if (PayloadBuffer.GetDataSize() > 2 * RtpPacketSize)
+  {
+    PayloadBuffer.Consolidate(RtpPacketSize);
+  }
 }

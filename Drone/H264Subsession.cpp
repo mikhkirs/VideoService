@@ -3,13 +3,14 @@
 
 #include "H264VideoStreamFramer.hh"
 
-H264Subsession::H264Subsession(UsageEnvironment& env)
+H264Subsession::H264Subsession(UsageEnvironment& env, Buffer& payloadBuffer)
   : H264VideoFileServerMediaSubsession(env, "", True)
+  , PayloadBuffer(payloadBuffer)
 {
 }
 
 FramedSource* H264Subsession::createNewStreamSource(unsigned clientSessionId, unsigned& estBitrate)
 {
-  auto h264 = new PacketFrameSource(envir());
+  auto h264 = new PacketFrameSource(envir(), PayloadBuffer);
   return H264VideoStreamFramer::createNew(envir(), h264);
 }
