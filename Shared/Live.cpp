@@ -6,10 +6,11 @@
 #include "RTSPServer.hh"
 #include "ServerMediaSession.hh"
 
-const unsigned RtpPacketSize = 15000;
+#include <iostream>
+#include <vector>
 
-Live::Live()
-  : PayloadBuffer(0)
+Live::Live(Buffer& payloadBuffer)
+  : PayloadBuffer(payloadBuffer)
 {
   TaskScheduler* scheduler = BasicTaskScheduler::createNew();
   UsageEnvironment* env = BasicUsageEnvironment::createNew(*scheduler);
@@ -40,13 +41,4 @@ Live::~Live()
 {
   if (RtspServerThread.joinable())
     RtspServerThread.join();
-}
-
-void Live::Handle(const unsigned char* packetData, unsigned size)
-{
-  PayloadBuffer.Add(packetData, size);
-  if (PayloadBuffer.GetDataSize() > 2 * RtpPacketSize)
-  {
-    PayloadBuffer.Consolidate(RtpPacketSize);
-  }
 }

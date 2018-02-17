@@ -3,6 +3,8 @@
 
 #include "H264VideoStreamFramer.hh"
 
+#include <iostream>
+
 H264Subsession::H264Subsession(UsageEnvironment& env, Buffer& payloadBuffer)
   : H264VideoFileServerMediaSubsession(env, "", True)
   , PayloadBuffer(payloadBuffer)

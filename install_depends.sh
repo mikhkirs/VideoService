@@ -26,3 +26,11 @@ cd /opt/vc/src/hello_pi
 sudo chmod +x rebuild.sh
 sudo ./rebuild.sh
 cd -
+
+wget http://www.live555.com/liveMedia/public/live555-latest.tar.gz
+tar -xf live555-latest.tar.gz
+cd live
+./genMakefiles linux
+make
+sudo make install
+sudo ldconfig

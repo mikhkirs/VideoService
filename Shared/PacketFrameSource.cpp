@@ -15,14 +15,9 @@ PacketFrameSource::~PacketFrameSource()
 
 void PacketFrameSource::doGetNextFrame()
 {
-  while (PayloadBuffer.GetDataSize() < fMaxSize)
-  {
-    usleep(1);
-  }
-
-  memcpy(fTo, PayloadBuffer.GetData(), fMaxSize);
-  fFrameSize = fMaxSize;
-  PayloadBuffer.Consolidate(fMaxSize);
+  fFrameSize = std::min(fMaxSize, PayloadBuffer.GetDataSize());
+  memcpy(fTo, PayloadBuffer.GetData(), fFrameSize);
+  PayloadBuffer.Consolidate(fFrameSize);
 
   gettimeofday(&fPresentationTime, NULL);
   nextTask() = envir().taskScheduler().scheduleDelayedTask(0,

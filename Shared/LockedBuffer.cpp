@@ -21,19 +21,19 @@ void LockedBuffer::Reset()
 unsigned char* LockedBuffer::GetData()
 {
   MutexHolder holder(Mutex);
-  Buffer::GetData();
+  return Buffer::GetData();
 }
 
 unsigned LockedBuffer::GetDataSize()
 {
   MutexHolder holder(Mutex);
-  Buffer::GetDataSize();
+  return Buffer::GetDataSize();
 }
 
 unsigned LockedBuffer::GetSize()
 {
   MutexHolder holder(Mutex);
-  Buffer::GetSize();
+  return Buffer::GetSize();
 }
 
 void LockedBuffer::Consolidate(unsigned offset)

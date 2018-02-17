@@ -1,6 +1,6 @@
 ﻿#include "Config.h"
 #include "FileWriter.h"
-#include "Live.h"
+#include "LiveSender.h"
 #include "LiveStream.h"
 #include "RaspberryCamera.h"
 #include "RaspberryEncoder.h"
@@ -26,9 +26,9 @@ int main(int argc, char **argv)
     int liveBitrate = config.GetInt("live", "bitrate");
 
     FileWriter fileWriter(recordPath);
-    Live live;
+    LiveSender liveSender;
     RaspberryEncoder recordEncoder(width, height, bitrate, fps, fileWriter);
-    RaspberryEncoder liveEncoder(liveWidth, liveHeight, liveBitrate, fps, live);
+    RaspberryEncoder liveEncoder(liveWidth, liveHeight, liveBitrate, fps, liveSender);
 
     auto recordStream = std::make_shared<RecordStream>(recordEncoder);
     auto liveStream = std::make_shared<LiveStream>(liveEncoder);
