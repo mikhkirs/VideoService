@@ -1,9 +1,9 @@
 ﻿#include "RecordStream.h"
 #include "TimeUtils.h"
 
-RecordStream::RecordStream(Encoder& encoder)
+RecordStream::RecordStream(Encoder& encoder, bool started)
   : EncoderEngine(encoder)
-  , Started(false)
+  , Started(started)
 {
 }
 

@@ -3,8 +3,9 @@
 #include <functional>
 #include <iostream>
 
-WebServer::WebServer(StartController& record, StartController& live)
-  : Record(record)
+WebServer::WebServer(int port, StartController& record, StartController& live)
+  : Port(port)
+  , Record(record)
   , Live(live)
 {
   auto statusResource = std::make_shared<restbed::Resource>();
@@ -53,6 +54,9 @@ void WebServer::GetStopRecord(const std::shared_ptr<restbed::Session> session)
 
 void WebServer::GetStartLive(const std::shared_ptr<restbed::Session> session)
 {
+  auto request = session->get_request();
+  int width = atoi(request->get_query_parameter("width").c_str());
+  std::cout << width << std::endl;
   Live.Start();
   session->close(200);
 }
@@ -66,7 +70,7 @@ void WebServer::GetStopLive(const std::shared_ptr<restbed::Session> session)
 void WebServer::Run()
 {
   auto settings = std::make_shared<restbed::Settings>();
-  settings->set_port(8080);
+  settings->set_port(Port);
   settings->set_default_header("Connection", "close");
   WebService.start(settings);
 }

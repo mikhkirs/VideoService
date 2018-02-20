@@ -7,7 +7,7 @@
 class RecordStream : public FrameHandler, public StartController
 {
 public:
-  RecordStream(Encoder& encoder);
+  RecordStream(Encoder& encoder, bool started);
 
   virtual void Handle(const unsigned char* data, unsigned size);
 

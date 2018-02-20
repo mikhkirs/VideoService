@@ -2,7 +2,7 @@ INC=-I../Shared -I../raspicam/src -I/opt/vc/src/hello_pi/libs/ilclient -I/opt/vc
 PRELIB=/opt/vc/src/hello_pi/libs/ilclient/libilclient.a ../restbed/build/librestbed.a -L/opt/vc/lib -lbcm_host -lopenmaxil -lbcm_host -lvcos -lvchiq_arm -lpthread -lraspicam -lssl -lcrypto -lliveMedia -lBasicUsageEnvironment -lgroupsock -lUsageEnvironment
 CPPFLAGS = -std=c++11
 BUILDLIST=FileWriter.cpp LiveSender.cpp LiveStream.cpp main.cpp RaspberryCamera.cpp RaspberryEncoder.cpp RecordStream.cpp WebServer.cpp
-SHAREDBUILDLIST=../Shared/Buffer.cpp ../Shared/Config.cpp ../Shared/File.cpp ../Shared/H264Subsession.cpp ../Shared/LockedBuffer.cpp ../Shared/MutexHolder.cpp ../Shared/PacketFrameSource.cpp ../Shared/TimeUtils.cpp ../Shared/UdpSendSocket.cpp
+SHAREDBUILDLIST=../Shared/Buffer.cpp ../Shared/Config.cpp ../Shared/File.cpp ../Shared/LockedBuffer.cpp ../Shared/MutexHolder.cpp ../Shared/TimeUtils.cpp ../Shared/UdpSendSocket.cpp
 THIRDPARTYBUILDLIST=../ini/cpp/INIReader.cpp ../ini/ini.c
 
 all:

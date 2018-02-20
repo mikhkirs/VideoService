@@ -17,6 +17,12 @@ LiveSender::~LiveSender()
 {
 }
 
+void LiveSender::InitHeader(const unsigned char* packetData, unsigned size)
+{
+  Header.resize(size);
+  memcpy(&Header[0], packetData, size);
+}
+
 void LiveSender::Handle(const unsigned char* packetData, unsigned size)
 {
   std::vector<unsigned char> buffer(size + sizeof(PacketCount));

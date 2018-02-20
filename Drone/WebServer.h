@@ -8,7 +8,7 @@
 class WebServer
 {
 public:
-  WebServer(StartController& record, StartController& live);
+  WebServer(int port, StartController& record, StartController& live);
   void Run();
 
 private:
@@ -19,6 +19,7 @@ private:
   void GetStopLive(const std::shared_ptr<restbed::Session> session);
 
 private:
+  int Port;
   StartController& Record;
   StartController& Live;
   restbed::Service WebService;
