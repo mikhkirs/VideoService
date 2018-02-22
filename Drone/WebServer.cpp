@@ -62,7 +62,7 @@ void WebServer::GetStatus(const std::shared_ptr<restbed::Session> session)
   }
   writer.EndObject();
 
-  session->close(200, s.GetString() + "\n");
+  session->close(200, s.GetString());
 }
 
 void WebServer::GetStartRecord(const std::shared_ptr<restbed::Session> session)

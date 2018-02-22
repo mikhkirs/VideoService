@@ -2,6 +2,7 @@
 
 #include "Camera.h"
 
+#include <list>
 #include <memory>
 #include <thread>
 #include <vector>
@@ -29,6 +30,6 @@ private:
   const unsigned Fps;
   raspicam::RaspiCam RaspiCamera;
   std::vector<unsigned char> Data;
-  std::vector<std::shared_ptr<FrameHandler> > Handlers;
+  std::list<std::shared_ptr<FrameHandler> > Handlers;
   std::thread CaptureThread;
 };
