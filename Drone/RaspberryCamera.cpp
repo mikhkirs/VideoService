@@ -75,6 +75,11 @@ void RaspberryCamera::AddHandler(std::shared_ptr<FrameHandler> handler)
   Handlers.push_back(handler);
 }
 
+void RaspberryCamera::RemoveHandler(std::shared_ptr<FrameHandler> handler)
+{
+  //Handlers.erase(handler);
+}
+
 void RaspberryCamera::Handle()
 {
   for (auto handler : Handlers)

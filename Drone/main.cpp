@@ -1,10 +1,8 @@
 ﻿#include "Config.h"
 #include "FileWriter.h"
-#include "LiveSender.h"
-#include "LiveStream.h"
 #include "RaspberryCamera.h"
 #include "RaspberryEncoder.h"
-#include "RecordStream.h"
+#include "Stream.h"
 #include "WebServer.h"
 
 #include <iostream>
@@ -24,26 +22,18 @@ int main(int argc, char **argv)
     int clipTime = config.GetInt("record", "clip_time");
     int clipLimit = config.GetInt("record", "clip_limit");
 
-    int liveWidth = config.GetInt("live", "width");
-    int liveHeight = config.GetInt("live", "height");
-    int liveBitrate = config.GetInt("live", "bitrate");
-
     int httpServerPort = config.GetInt("common", "http_server_port");
 
     FileWriter fileWriter(recordPath, clipTime, clipLimit);
-    LiveSender liveSender;
     RaspberryEncoder recordEncoder(width, height, bitrate, fps, fileWriter);
-    RaspberryEncoder liveEncoder(liveWidth, liveHeight, liveBitrate, fps, liveSender);
 
-    auto recordStream = std::make_shared<RecordStream>(recordEncoder, recordStarted);
-    auto liveStream = std::make_shared<LiveStream>(liveEncoder);
+    auto recordStream = std::make_shared<Stream>(recordEncoder, width, height, fps, recordStarted);
 
     RaspberryCamera camera(width, height, fps);
     camera.AddHandler(recordStream);
-    camera.AddHandler(liveStream);
     camera.Capture();
 
-    WebServer webServer(httpServerPort, *recordStream, *liveStream);
+    WebServer webServer(httpServerPort, camera, *recordStream);
     webServer.Run();
   }
   catch (const std::exception& e)

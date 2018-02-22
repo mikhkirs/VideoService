@@ -1,12 +1,15 @@
 ﻿#include "WebServer.h"
 
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
+
 #include <functional>
 #include <iostream>
 
-WebServer::WebServer(int port, StartController& record, StartController& live)
+WebServer::WebServer(int port, Camera& camera, StartController& record)
   : Port(port)
+  , CameraCapture(camera)
   , Record(record)
-  , Live(live)
 {
   auto statusResource = std::make_shared<restbed::Resource>();
   statusResource->set_path("/status");
@@ -36,8 +39,30 @@ WebServer::WebServer(int port, StartController& record, StartController& live)
 
 void WebServer::GetStatus(const std::shared_ptr<restbed::Session> session)
 {
-  std::string answer = "record=" + std::to_string(Record.IsStarted()) + "&live=" + std::to_string(Live.IsStarted()) + "\n";
-  session->close(200, answer);
+  rapidjson::StringBuffer s;
+  rapidjson::Writer<rapidjson::StringBuffer> writer(s);
+  writer.StartObject();
+  if (LiveStream.get())
+  {
+    writer.Key("status");
+    writer.String("ok");
+    writer.Key("width");
+    writer.Uint(LiveStream->GetWidth());
+    writer.Key("height");
+    writer.Uint(LiveStream->GetHeight());
+    writer.Key("server");
+    writer.String(Sender->GetHost().c_str());
+    writer.Key("port");
+    writer.Uint(Sender->GetPort());
+  }
+  else
+  {
+    writer.Key("status");
+    writer.String("stopped");
+  }
+  writer.EndObject();
+
+  session->close(200, s.GetString() + "\n");
 }
 
 void WebServer::GetStartRecord(const std::shared_ptr<restbed::Session> session)
@@ -55,16 +80,43 @@ void WebServer::GetStopRecord(const std::shared_ptr<restbed::Session> session)
 void WebServer::GetStartLive(const std::shared_ptr<restbed::Session> session)
 {
   auto request = session->get_request();
-  int width = atoi(request->get_query_parameter("width").c_str());
-  std::cout << width << std::endl;
-  Live.Start();
+  int width = stoi(request->get_query_parameter("width"));
+  int height = stoi(request->get_query_parameter("height"));
+  int bitrate = stoi(request->get_query_parameter("bitrate"));
+  int framerate = stoi(request->get_query_parameter("framerate"));
+  std::string server = request->get_query_parameter("server");
+  int port = stoi(request->get_query_parameter("port"));
+  
+  StartLive(width, height, bitrate, framerate, server, port);
   session->close(200);
 }
 
 void WebServer::GetStopLive(const std::shared_ptr<restbed::Session> session)
 {
-  Live.Stop();
+  StopLive();
   session->close(200);
+}
+
+void WebServer::StartLive(unsigned width, unsigned height, unsigned bitrate, unsigned fps, const std::string& server, unsigned port)
+{
+  if (LiveStream.get())
+  {
+    StopLive();
+  }
+  Sender = std::make_shared<LiveSender>(server, port);
+  Encoder = std::make_shared<RaspberryEncoder>(width, height, bitrate, fps, *Sender);
+  LiveStream = std::make_shared<Stream>(*Encoder, width, height, fps, true);
+  LiveStream->Start();
+  CameraCapture.AddHandler(LiveStream);
+}
+
+void WebServer::StopLive()
+{
+  LiveStream->Stop();
+  CameraCapture.RemoveHandler(LiveStream);
+  LiveStream.reset();
+  Encoder.reset();
+  Sender.reset();
 }
 
 void WebServer::Run()

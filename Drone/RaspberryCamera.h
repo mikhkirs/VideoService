@@ -15,6 +15,7 @@ public:
   ~RaspberryCamera();
   virtual void Capture();
   virtual void AddHandler(std::shared_ptr<FrameHandler> handler);
+  virtual void RemoveHandler(std::shared_ptr<FrameHandler> handler);
 
 private:
   void Handle();

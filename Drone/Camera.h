@@ -9,4 +9,5 @@ class Camera
 public:
   virtual void Capture() = 0;
   virtual void AddHandler(std::shared_ptr<FrameHandler> handler) = 0;
+  virtual void RemoveHandler(std::shared_ptr<FrameHandler> handler) = 0;
 };
