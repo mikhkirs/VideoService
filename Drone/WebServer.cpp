@@ -79,16 +79,33 @@ void WebServer::GetStopRecord(const std::shared_ptr<restbed::Session> session)
 
 void WebServer::GetStartLive(const std::shared_ptr<restbed::Session> session)
 {
-  auto request = session->get_request();
-  int width = stoi(request->get_query_parameter("width"));
-  int height = stoi(request->get_query_parameter("height"));
-  int bitrate = stoi(request->get_query_parameter("bitrate"));
-  int framerate = stoi(request->get_query_parameter("framerate"));
-  std::string server = request->get_query_parameter("server");
-  int port = stoi(request->get_query_parameter("port"));
-  
-  StartLive(width, height, bitrate, framerate, server, port);
-  session->close(200);
+  try
+  {
+    auto request = session->get_request();
+    int width = stoi(request->get_query_parameter("width"));
+    int height = stoi(request->get_query_parameter("height"));
+    int bitrate = stoi(request->get_query_parameter("bitrate"));
+    int framerate = stoi(request->get_query_parameter("framerate"));
+    std::string server = request->get_query_parameter("server");
+    int port = stoi(request->get_query_parameter("port"));
+
+    if (width > CameraCapture.GetWidth() || height > CameraCapture.GetHeight())
+    {
+      throw std::runtime_error("Requested frame size bigger than frame captured by camera");
+    }
+    if (framerate > CameraCapture.GetFps())
+    {
+      throw std::runtime_error("Requested framerate bigger than framerate captured by camera");
+    }
+
+    StartLive(width, height, bitrate, framerate, server, port);
+    session->close(200, "{status: \"ok\"}");
+  }
+  catch (const std::exception& e)
+  {
+    std::string errorString = std::string("{status: \"") + e.what() + std::string("\"}");
+    session->close(500, errorString.c_str());
+  }
 }
 
 void WebServer::GetStopLive(const std::shared_ptr<restbed::Session> session)
@@ -105,7 +122,7 @@ void WebServer::StartLive(unsigned width, unsigned height, unsigned bitrate, uns
   }
   Sender = std::make_shared<LiveSender>(server, port);
   Encoder = std::make_shared<RaspberryEncoder>(width, height, bitrate, fps, *Sender);
-  LiveStream = std::make_shared<Stream>(*Encoder, width, height, fps, true);
+  LiveStream = std::make_shared<Stream>(*Encoder, CameraCapture.GetWidth(), CameraCapture.GetHeight(), CameraCapture.GetFps(), width, height, fps, true);
   LiveStream->Start();
   CameraCapture.AddHandler(LiveStream);
 }

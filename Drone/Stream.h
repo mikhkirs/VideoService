@@ -7,7 +7,7 @@
 class Stream : public FrameHandler, public StartController
 {
 public:
-  Stream(Encoder& encoder, unsigned width, unsigned height, unsigned fps, bool started);
+  Stream(Encoder& encoder, unsigned cameraWidth, unsigned cameraHeight, unsigned cameraFps, unsigned width, unsigned height, unsigned fps, bool started);
 
   virtual void Handle(const unsigned char* data, unsigned size);
 
@@ -21,8 +21,14 @@ public:
 
 private:
   Encoder& EncoderEngine;
+  unsigned CameraWidth;
+  unsigned CameraHeight;
+  unsigned CameraFps;
   unsigned Width;
   unsigned Height;
   unsigned Fps;
   bool Started;
+  unsigned FrameNumber;
+  unsigned TakeFrame;
+  unsigned SkipFrame;
 };

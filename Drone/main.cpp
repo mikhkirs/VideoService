@@ -13,6 +13,9 @@ int main(int argc, char **argv)
   {
     Config config;
 
+    int cameraWidth = config.GetInt("camera", "width");
+    int cameraHeight = config.GetInt("camera", "height");
+    int cameraFps = config.GetInt("camera", "fps");
     bool recordStarted = config.GetInt("record", "started") == 1;
     std::string recordPath = config.GetString("record", "path");
     int width = config.GetInt("record", "width");
@@ -27,9 +30,9 @@ int main(int argc, char **argv)
     FileWriter fileWriter(recordPath, clipTime, clipLimit);
     RaspberryEncoder recordEncoder(width, height, bitrate, fps, fileWriter);
 
-    auto recordStream = std::make_shared<Stream>(recordEncoder, width, height, fps, recordStarted);
+    auto recordStream = std::make_shared<Stream>(recordEncoder, cameraWidth, cameraHeight, cameraFps, width, height, fps, recordStarted);
 
-    RaspberryCamera camera(width, height, fps);
+    RaspberryCamera camera(cameraWidth, cameraHeight, cameraFps);
     camera.AddHandler(recordStream);
     camera.Capture();
 

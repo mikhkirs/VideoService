@@ -17,6 +17,9 @@ public:
   unsigned GetPort() const;
 
 private:
+  void SendHeader();
+
+private:
   UdpSendSocket Socket;
   unsigned PacketCount;
   std::vector<unsigned char> Header;
