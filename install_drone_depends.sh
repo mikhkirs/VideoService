@@ -22,6 +22,9 @@ sudo make install
 sudo ldconfig
 cd ../..
 
+rm -rf rapidjson
+git clone https://github.com/Tencent/rapidjson.git
+
 cd /opt/vc/src/hello_pi
 sudo chmod +x rebuild.sh
 sudo ./rebuild.sh
