@@ -129,6 +129,10 @@ void WebServer::StartLive(unsigned width, unsigned height, unsigned bitrate, uns
 
 void WebServer::StopLive()
 {
+  if (!LiveStream.get())
+  {
+    return;
+  }
   LiveStream->Stop();
   CameraCapture.RemoveHandler(LiveStream);
   LiveStream.reset();
@@ -141,5 +145,6 @@ void WebServer::Run()
   auto settings = std::make_shared<restbed::Settings>();
   settings->set_port(Port);
   settings->set_default_header("Connection", "close");
+  std::cout << "Listen http requests on port " << Port << std::endl;
   WebService.start(settings);
 }

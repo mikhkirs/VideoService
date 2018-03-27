@@ -58,5 +58,6 @@ void WebServer::Run()
   auto settings = std::make_shared<restbed::Settings>();
   settings->set_port(Port);
   settings->set_default_header("Connection", "close");
+  std::cout << "Listen http requests on port " << Port << std::endl;
   WebService.start(settings);
 }
