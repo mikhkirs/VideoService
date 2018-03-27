@@ -6,14 +6,17 @@
 // 3 sec for 1MB bitrate
 const unsigned MaxPayloadBufferSize = 3*128*1024;
 
-LiveReciever::LiveReciever(unsigned portIn, unsigned portOut, const std::string& uid)
+LiveReciever::LiveReciever(Live& rtspLive, unsigned portIn, unsigned portOut, const std::string& uid)
   : Canceled(false)
   , Started(false)
   , PayloadBuffer(MaxPayloadBufferSize)
-  , RtspLive(PayloadBuffer, portOut, uid)
+  , RtspLive(rtspLive)
   , ListenSocket(portIn)
   , PrevPacketNumber(0)
+  , PortOut(portOut)
+  , Uid(uid)
 {
+  RtspLive.createSession(PayloadBuffer, portOut, uid);
   ListenSocket.Connect();
 
   ReceiveThread = std::thread(&LiveReciever::ReceiveThreadFunc, this);
@@ -22,6 +25,7 @@ LiveReciever::LiveReciever(unsigned portIn, unsigned portOut, const std::string&
 LiveReciever::~LiveReciever()
 {
   Canceled = true;
+  RtspLive.removeSession(PortOut, Uid);
   if (ReceiveThread.joinable())
     ReceiveThread.join();
 }
